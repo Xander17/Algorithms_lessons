@@ -1,6 +1,5 @@
 package lesson3;
 
-import java.util.Arrays;
 import java.util.EmptyStackException;
 
 public class MyDeque<T> {
@@ -47,9 +46,8 @@ public class MyDeque<T> {
     }
 
     private int newIndex(int index) {
-        int newIndex = index % array.length;
-        if (newIndex < 0) newIndex += array.length;
-        return newIndex;
+        if (index < 0) index += array.length;
+        return index % array.length;
     }
 
     public void addFirst(T element) {

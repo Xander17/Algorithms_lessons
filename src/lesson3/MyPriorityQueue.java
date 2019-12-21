@@ -1,21 +1,24 @@
 package lesson3;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EmptyStackException;
 
-public class MyQueue<T> {
+public class MyPriorityQueue<T extends Comparator<T>> {
     private T[] array;
-    private int size=0;
-    private int beginIndex=0;
-    private int endIndex=0;
+    private int size = 0;
+    private Comparator<T> comparator;
     private final int DEFAULT_CAPACITY = 10;
     private final float CAPACITY_INCREASE_FACTOR = 1.5f;
 
-    public MyQueue(int capacity) {
+    public MyPriorityQueue(int capacity, Comparator<T> comparator) {
         if (capacity <= 0) throw new IllegalArgumentException("Capacity should be 1 or more");
+        this.comparator = comparator;
         array = getNewArray(capacity);
     }
 
-    public MyQueue() {
+    public MyPriorityQueue(Comparator<T> comparator) {
+        this.comparator = comparator;
         array = getNewArray(DEFAULT_CAPACITY);
     }
 
@@ -36,44 +39,47 @@ public class MyQueue<T> {
     }
 
     private void increaseCapacity() {
-        T[] newArray = getNewArray((int) (array.length * CAPACITY_INCREASE_FACTOR));
-        for (int i = 0; i < size; i++) {
-            newArray[i] = (array[newIndex(i + beginIndex)]);
-        }
-        array = newArray;
-        beginIndex = 0;
-        endIndex = size;
-    }
-
-    private int newIndex(int index) {
-        return index % array.length;
+        array = Arrays.copyOf(array, (int) (array.length * CAPACITY_INCREASE_FACTOR));
     }
 
     public void add(T element) {
         if (isFull()) increaseCapacity();
-        array[endIndex] = element;
+        array[size] = element;
         size++;
-        endIndex = newIndex(endIndex + 1);
+        sort();
+    }
+
+    private void sort() {
+        int i = size - 1;
+        while (i > 0 && comparator.compare(array[i], array[i - 1]) > 0) {
+            swap(i, i - 1);
+            i--;
+        }
     }
 
     public T remove() {
         T element = peek();
         size--;
-        array[beginIndex] = null;
-        beginIndex = newIndex(beginIndex + 1);
+        array[size] = null;
         return element;
     }
 
     public T peek() {
         if (isEmpty()) throw new EmptyStackException();
-        return array[beginIndex];
+        return array[size - 1];
+    }
+
+    private void swap(int index1, int index2) {
+        T tmp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = tmp;
     }
 
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("---{").append(System.lineSeparator());
-        for (int i = 0; i < size; i++) {
-            s.append("\t").append(array[newIndex(i + beginIndex)]).append(System.lineSeparator());
+        for (int i = size - 1; i >= 0; i--) {
+            s.append("\t").append(array[i]).append(System.lineSeparator());
         }
         s.append("}---");
         return s.toString();
