@@ -10,131 +10,6 @@ public class MyLinkedList<T> implements Iterable<T> {
     private Node<T> first;
     private Node<T> last;
 
-    private class Node<E> {
-        E value;
-        Node<E> prev;
-        Node<E> next;
-
-        Node(Node<E> prev, E value, Node<E> next) {
-            this.value = value;
-            this.prev = prev;
-            this.next = next;
-        }
-
-        Node(E value, Node<E> next) {
-            this(null, value, next);
-        }
-
-        Node(Node<E> prev, E value) {
-            this(prev, value, null);
-        }
-    }
-
-    private class InnerIterator implements Iterator<T> {
-        private Node<T> current = new Node<>(null, null, first);
-        private boolean removeEnable = false;
-
-        @Override
-        public boolean hasNext() {
-            return current.next != null;
-        }
-
-        @Override
-        public T next() {
-            if (current.next == null) throw new NoSuchElementException();
-            current = current.next;
-            removeEnable = true;
-            return current.value;
-        }
-
-        @Override
-        public void remove() {
-            if (removeEnable) {
-                removeNode(current);
-                removeEnable = false;
-            } else throw new IllegalStateException();
-        }
-    }
-
-    private class InnerListIterator implements ListIterator<T> {
-        private Node<T> nextNode = first;
-        private Node<T> current = null;
-        private Node<T> prevNode = null;
-        private int index = -1;
-
-        @Override
-        public boolean hasNext() {
-            return nextNode != null;
-        }
-
-        @Override
-        public T next() {
-            index++;
-            if (nextNode == null) throw new NoSuchElementException();
-            T value = nextNode.value;
-            current = nextNode;
-            prevNode = nextNode;
-            nextNode = nextNode.next;
-            return value;
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return prevNode != null;
-        }
-
-        @Override
-        public T previous() {
-            index--;
-            if (prevNode == null) throw new NoSuchElementException();
-            T value = prevNode.value;
-            current = prevNode;
-            nextNode = prevNode;
-            prevNode = prevNode.prev;
-            return value;
-        }
-
-        @Override
-        public int nextIndex() {
-            return index + 1;
-        }
-
-        @Override
-        public int previousIndex() {
-            return index;
-        }
-
-        @Override
-        public void set(T value) {
-            if (current == null) throw new IllegalStateException();
-            current.value = value;
-        }
-
-        @Override
-        public void remove() {
-            if (current == null) throw new IllegalStateException();
-            removeNode(current);
-            if (prevNode == current) prevNode = current.prev;
-            if (nextNode == current) nextNode = current.next;
-            current = null;
-        }
-
-        @Override
-        public void add(T value) {
-            if (index == -1) {
-                insertFirst(value);
-                prevNode = first;
-            } else if (index == size - 1) {
-                insertLast(value);
-                prevNode = last;
-            } else {
-                insertBefore(value, nextNode);
-                prevNode = nextNode.prev;
-            }
-            index++;
-        }
-    }
-
     @Override
     public Iterator<T> iterator() {
         return new InnerIterator();
@@ -308,5 +183,130 @@ public class MyLinkedList<T> implements Iterable<T> {
         }
         s.append(" ]");
         return s.toString();
+    }
+
+    private class Node<E> {
+        E value;
+        Node<E> prev;
+        Node<E> next;
+
+        Node(Node<E> prev, E value, Node<E> next) {
+            this.value = value;
+            this.prev = prev;
+            this.next = next;
+        }
+
+        Node(E value, Node<E> next) {
+            this(null, value, next);
+        }
+
+        Node(Node<E> prev, E value) {
+            this(prev, value, null);
+        }
+    }
+
+    private class InnerIterator implements Iterator<T> {
+        private Node<T> current = new Node<>(null, null, first);
+        private boolean removeEnable = false;
+
+        @Override
+        public boolean hasNext() {
+            return current.next != null;
+        }
+
+        @Override
+        public T next() {
+            if (current.next == null) throw new NoSuchElementException();
+            current = current.next;
+            removeEnable = true;
+            return current.value;
+        }
+
+        @Override
+        public void remove() {
+            if (removeEnable) {
+                removeNode(current);
+                removeEnable = false;
+            } else throw new IllegalStateException();
+        }
+    }
+
+    private class InnerListIterator implements ListIterator<T> {
+        private Node<T> nextNode = first;
+        private Node<T> current = null;
+        private Node<T> prevNode = null;
+        private int index = -1;
+
+        @Override
+        public boolean hasNext() {
+            return nextNode != null;
+        }
+
+        @Override
+        public T next() {
+            index++;
+            if (nextNode == null) throw new NoSuchElementException();
+            T value = nextNode.value;
+            current = nextNode;
+            prevNode = nextNode;
+            nextNode = nextNode.next;
+            return value;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return prevNode != null;
+        }
+
+        @Override
+        public T previous() {
+            index--;
+            if (prevNode == null) throw new NoSuchElementException();
+            T value = prevNode.value;
+            current = prevNode;
+            nextNode = prevNode;
+            prevNode = prevNode.prev;
+            return value;
+        }
+
+        @Override
+        public int nextIndex() {
+            return index + 1;
+        }
+
+        @Override
+        public int previousIndex() {
+            return index;
+        }
+
+        @Override
+        public void set(T value) {
+            if (current == null) throw new IllegalStateException();
+            current.value = value;
+        }
+
+        @Override
+        public void remove() {
+            if (current == null) throw new IllegalStateException();
+            removeNode(current);
+            if (prevNode == current) prevNode = current.prev;
+            if (nextNode == current) nextNode = current.next;
+            current = null;
+        }
+
+        @Override
+        public void add(T value) {
+            if (index == -1) {
+                insertFirst(value);
+                prevNode = first;
+            } else if (index == size - 1) {
+                insertLast(value);
+                prevNode = last;
+            } else {
+                insertBefore(value, nextNode);
+                prevNode = nextNode.prev;
+            }
+            index++;
+        }
     }
 }
