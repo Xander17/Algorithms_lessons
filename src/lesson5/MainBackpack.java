@@ -1,11 +1,12 @@
 package lesson5;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainBackpack {
 
     private static Item[] items;
-    private static int maxWeight = 15;
+    private static int maxWeight = 50;
 
     public static void main(String[] args) {
         items = new Item[20];
@@ -26,35 +27,36 @@ public class MainBackpack {
 
     private static int maxPrice;
     private static int maxPriceWeight;
-    private static int indexesMaxPrice;
+    private static int[] indexesMaxPrice;
 
     private static Item[] recursiveBackpackFill() {
         maxPrice = 0;
         maxPriceWeight = 0;
-        indexesMaxPrice = 0;
-        recursiveBackpackFill(0, 0, 0, 0);
-        return putItemsByIndexes(getIndexes(indexesMaxPrice));
+        recursiveBackpackFill(0, new int[items.length], 0, 0);
+        return putItemsByIndexes(indexesMaxPrice);
     }
 
-    private static void recursiveBackpackFill(int startIndex, int binaryIndex, int sumPrice, int sumWeight) {
+    private static void recursiveBackpackFill(int startIndex, int[] binaryIndex, int sumPrice, int sumWeight) {
         if (startIndex >= items.length) {
             checkMax(sumPrice, sumWeight, binaryIndex);
             return;
         }
-        for (int i = startIndex; i <= items.length; i++) {
+        for (int i = startIndex; i < items.length; i++) {
             if (sumWeight + items[i].weight > maxWeight) {
                 checkMax(sumPrice, sumWeight, binaryIndex);
                 continue;
             }
-            recursiveBackpackFill(i + 1, binaryIndex + (int) Math.pow(2, i), sumPrice + items[i].price, sumWeight + items[i].weight);
+            binaryIndex[i] = 1;
+            recursiveBackpackFill(i + 1, binaryIndex, sumPrice + items[i].price, sumWeight + items[i].weight);
+            binaryIndex[i] = 0;
         }
     }
 
-    private static void checkMax(int sumPrice, int sumWeight, int binaryIndex) {
+    private static void checkMax(int sumPrice, int sumWeight, int[] binaryIndex) {
         if (sumPrice > maxPrice || (sumPrice == maxPrice && sumWeight < maxPriceWeight)) {
             maxPrice = sumPrice;
             maxPriceWeight = sumWeight;
-            indexesMaxPrice = binaryIndex;
+            indexesMaxPrice = Arrays.copyOf(binaryIndex, binaryIndex.length);
         }
     }
 
@@ -62,9 +64,9 @@ public class MainBackpack {
         int len = (int) Math.pow(2, items.length);
         int maxPrice = 0;
         int maxPriceWeight = 0;
-        Integer[] indexesOfMax = new Integer[0];
+        int[] indexesOfMax = new int[0];
         for (int i = 1; i < len; i++) {
-            Integer[] indexes = getIndexes(i);
+            int[] indexes = getIndexes(i);
             int sumWeight = 0;
             int sumPrice = 0;
             for (int j = 0; j < indexes.length; j++) {
@@ -84,19 +86,26 @@ public class MainBackpack {
         return putItemsByIndexes(indexesOfMax);
     }
 
-    private static Integer[] getIndexes(int binaryIndex) {
-        ArrayList<Integer> list = new ArrayList<>();
+    private static int[] getIndexes(int binaryIndex) {
+        int[] list = new int[items.length];
+        int count = 0;
         while (binaryIndex > 0) {
-            list.add(binaryIndex % 2);
+            list[count] = binaryIndex % 2;
+            count++;
             binaryIndex /= 2;
         }
-        return list.toArray(new Integer[0]);
+        return list;
     }
 
-    private static Item[] putItemsByIndexes(Integer[] indexes) {
+    private static Item[] putItemsByIndexes(int[] indexes) {
         ArrayList<Item> itemsInBackpack = new ArrayList<>();
         for (int i = 0; i < indexes.length; i++) {
-            if (indexes[i] == 1) itemsInBackpack.add(items[i]);
+
+            try {
+                if (indexes[i] == 1) itemsInBackpack.add(items[i]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return itemsInBackpack.toArray(new Item[0]);
     }
@@ -108,7 +117,7 @@ public class MainBackpack {
             sumWeight += item.weight;
             sumPrice += item.price;
         }
-        System.out.println("Weight: " + sumWeight + "; Price: " + sumPrice);
+        System.out.println("Items count: " + items.length + "; Weight: " + sumWeight + "; Price: " + sumPrice);
     }
 
     private static class Item {
