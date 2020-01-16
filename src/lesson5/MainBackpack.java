@@ -100,12 +100,7 @@ public class MainBackpack {
     private static Item[] putItemsByIndexes(int[] indexes) {
         ArrayList<Item> itemsInBackpack = new ArrayList<>();
         for (int i = 0; i < indexes.length; i++) {
-
-            try {
-                if (indexes[i] == 1) itemsInBackpack.add(items[i]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if (indexes[i] == 1) itemsInBackpack.add(items[i]);
         }
         return itemsInBackpack.toArray(new Item[0]);
     }
