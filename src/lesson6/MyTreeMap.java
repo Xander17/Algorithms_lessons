@@ -1,7 +1,5 @@
 package lesson6;
 
-import java.util.NoSuchElementException;
-
 public class MyTreeMap<Key extends Comparable<Key>, Value> {
     private Node root;
 
@@ -35,12 +33,21 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         return node.size;
     }
 
+    public int height() {
+        return height(root);
+    }
+
+    private int height(Node node) {
+        if (node == null) return 0;
+        return node.height;
+    }
+
     public boolean isEmpty() {
         return root == null;
     }
 
     private void checkKeyIsNotNull(Key key) {
-        if (key == null) throw new IllegalArgumentException("Key should not be a null");
+        if (key == null) throw new NullPointerException("Key should not be a null");
     }
 
     public final boolean contains(Key key) {
@@ -75,6 +82,7 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         else if (cmp < 0) node.left = put(node.left, key, value);
         else node.right = put(node.right, key, value);
         node.size = size(node.left) + size(node.right) + 1;
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
         return node;
     }
 
@@ -87,8 +95,17 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         return min(node.left);
     }
 
+    public Key maxKey() {
+        return max(root).key;
+    }
+
+    private Node max(Node node) {
+        if (node.right == null) return node;
+        return max(node.right);
+    }
+
     public void deleteMin() {
-        if (isEmpty()) throw new NoSuchElementException();
+        if (isEmpty()) return;
         root = deleteMin(root);
     }
 
@@ -96,6 +113,20 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         if (node.left == null) return node.right;
         node.left = deleteMin(node.left);
         node.size = size(node.left) + size(node.right) + 1;
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
+        return node;
+    }
+
+    public void deleteMax() {
+        if (isEmpty()) return;
+        root = deleteMin(root);
+    }
+
+    private Node deleteMax(Node node) {
+        if (node.right == null) return node.left;
+        node.right = deleteMin(node.right);
+        node.size = size(node.left) + size(node.right) + 1;
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
         return node;
     }
 
@@ -118,7 +149,17 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
             node.left = tmp.left;
         }
         node.size = size(node.left) + size(node.right) + 1;
+        node.height = Math.max(height(node.left), height(node.right)) + 1;
         return node;
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node) {
+        if (node == null) return true;
+        return isBalanced(node.left) && isBalanced(node.right) && (Math.abs(height(node.left) - height(node.right)) <= 1);
     }
 
     @Override
@@ -130,6 +171,6 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         if (node == null) {
             return "";
         }
-        return node.left + " " + node + " " + node.right;
+        return toString(node.left) + " " + node + " " + toString(node.right);
     }
 }
