@@ -3,27 +3,6 @@ package lesson6;
 public class MyTreeMap<Key extends Comparable<Key>, Value> {
     private Node root;
 
-    private class Node {
-        private Key key;
-        private Value value;
-        private Node left;
-        private Node right;
-        private int size;
-        private int height;
-
-        public Node(Key key, Value value) {
-            this.key = key;
-            this.value = value;
-            size = 1;
-            height = 0;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + key + " = " + value + "]";
-        }
-    }
-
     public int size() {
         return size(root);
     }
@@ -49,6 +28,17 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
     private void recalculateHeight(Node node) {
         if (node.left == null && node.right == null) node.height = 0;
         else node.height = Math.max(height(node.left), height(node.right)) + 1;
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(Node node) {
+        if (node == null) return true;
+        int heightLeft = (node.left == null ? 0 : (node.left.height + 1));
+        int heightRight = (node.right == null ? 0 : (node.right.height + 1));
+        return isBalanced(node.left) && isBalanced(node.right) && (Math.abs(heightLeft - heightRight) <= 1);
     }
 
     public boolean isEmpty() {
@@ -162,17 +152,6 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         return node;
     }
 
-    public boolean isBalanced() {
-        return isBalanced(root);
-    }
-
-    private boolean isBalanced(Node node) {
-        if (node == null) return true;
-        int heightLeft = (node.left == null ? 0 : (node.left.height + 1));
-        int heightRight = (node.right == null ? 0 : (node.right.height + 1));
-        return isBalanced(node.left) && isBalanced(node.right) && (Math.abs(heightLeft - heightRight) <= 1);
-    }
-
     @Override
     public String toString() {
         return toString(root);
@@ -183,5 +162,26 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
             return "";
         }
         return toString(node.left) + " " + node + " " + toString(node.right);
+    }
+
+    private class Node {
+        private Key key;
+        private Value value;
+        private Node left;
+        private Node right;
+        private int size;
+        private int height;
+
+        public Node(Key key, Value value) {
+            this.key = key;
+            this.value = value;
+            size = 1;
+            height = 0;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + key + " = " + value + "]";
+        }
     }
 }
