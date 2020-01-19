@@ -14,9 +14,9 @@ public class Main {
                 int value = 100 - random.nextInt(200);
                 map.put(key, value);
             }
-            System.out.println(map);
+//            System.out.println(map);
             boolean balanced = map.isBalanced();
-            System.out.println("height: " + map.height() + ", balanced: " + balanced);
+//            System.out.println("height: " + map.height() + ", balanced: " + balanced);
             if (balanced) break;
             imbalanced++;
         }
