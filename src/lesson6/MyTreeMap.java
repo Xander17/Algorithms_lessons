@@ -38,7 +38,9 @@ public class MyTreeMap<Key extends Comparable<Key>, Value> {
         if (node == null) return true;
         int heightLeft = (node.left == null ? 0 : (node.left.height + 1));
         int heightRight = (node.right == null ? 0 : (node.right.height + 1));
-        return isBalanced(node.left) && isBalanced(node.right) && (Math.abs(heightLeft - heightRight) <= 1);
+        boolean balanced = (Math.abs(heightLeft - heightRight) <= 1);
+        if (!balanced) return false;
+        return isBalanced(node.left) && isBalanced(node.right);
     }
 
     public boolean isEmpty() {
