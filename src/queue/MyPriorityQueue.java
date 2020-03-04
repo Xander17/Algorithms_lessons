@@ -1,20 +1,24 @@
-package lesson3;
+package queue;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EmptyStackException;
 
-public class MyStack<T> {
+public class MyPriorityQueue<T extends Comparator<T>> {
     private T[] array;
-    private int size=0;
+    private int size = 0;
+    private Comparator<T> comparator;
     private final int DEFAULT_CAPACITY = 10;
     private final float CAPACITY_INCREASE_FACTOR = 1.5f;
 
-    public MyStack(int capacity) {
+    public MyPriorityQueue(int capacity, Comparator<T> comparator) {
         if (capacity <= 0) throw new IllegalArgumentException("Capacity should be 1 or more");
+        this.comparator = comparator;
         array = getNewArray(capacity);
     }
 
-    public MyStack() {
+    public MyPriorityQueue(Comparator<T> comparator) {
+        this.comparator = comparator;
         array = getNewArray(DEFAULT_CAPACITY);
     }
 
@@ -38,13 +42,22 @@ public class MyStack<T> {
         array = Arrays.copyOf(array, (int) (array.length * CAPACITY_INCREASE_FACTOR));
     }
 
-    public void push(T element) {
+    public void add(T element) {
         if (isFull()) increaseCapacity();
         array[size] = element;
         size++;
+        sort();
     }
 
-    public T pop() {
+    private void sort() {
+        int i = size - 1;
+        while (i > 0 && comparator.compare(array[i], array[i - 1]) > 0) {
+            swap(i, i - 1);
+            i--;
+        }
+    }
+
+    public T remove() {
         T element = peek();
         size--;
         array[size] = null;
@@ -54,6 +67,12 @@ public class MyStack<T> {
     public T peek() {
         if (isEmpty()) throw new EmptyStackException();
         return array[size - 1];
+    }
+
+    private void swap(int index1, int index2) {
+        T tmp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = tmp;
     }
 
     @Override

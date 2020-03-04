@@ -1,4 +1,4 @@
-package lesson2;
+package arraylist;
 
 import java.util.Random;
 

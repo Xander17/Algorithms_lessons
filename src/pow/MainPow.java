@@ -1,4 +1,4 @@
-package lesson5;
+package pow;
 
 public class MainPow {
 

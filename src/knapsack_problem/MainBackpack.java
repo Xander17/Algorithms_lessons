@@ -1,4 +1,4 @@
-package lesson5;
+package knapsack_problem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

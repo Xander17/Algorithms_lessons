@@ -1,4 +1,4 @@
-package lesson3;
+package queue;
 
 import java.util.Scanner;
 

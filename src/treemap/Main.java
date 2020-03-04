@@ -1,4 +1,4 @@
-package lesson6;
+package treemap;
 
 import java.util.Random;
 

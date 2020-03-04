@@ -1,4 +1,4 @@
-package lesson4;
+package linkedlist;
 
 public class MyLinkedStack<T> {
     private MyLinkedList<T> list;

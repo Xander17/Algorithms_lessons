@@ -1,4 +1,4 @@
-package lesson6;
+package treemap;
 
 public class MyTreeMap<Key extends Comparable<Key>, Value> {
     private Node root;

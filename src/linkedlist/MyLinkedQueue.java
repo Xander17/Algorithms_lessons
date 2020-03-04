@@ -1,4 +1,4 @@
-package lesson4;
+package linkedlist;
 
 public class MyLinkedQueue<T> {
     private MyLinkedList<T> list;
